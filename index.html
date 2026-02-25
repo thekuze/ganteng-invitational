@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TUAN MUDA NIEL — 3x3 Standings</title>
+  <style>
+    :root{
+      --bg1:#0b1220;
+      --bg2:#111a2e;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.08);
+      --stroke: rgba(255,255,255,0.12);
+      --text:#eaf0ff;
+      --muted: rgba(234,240,255,0.72);
+      --accent1:#7c3aed;
+      --accent2:#22d3ee;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(900px 600px at 90% 20%, rgba(34,211,238,.25), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(59,130,246,.15), transparent 55%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 26px 18px 48px; }
+
+    .brand {
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .brand-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      width: fit-content;
+      background: linear-gradient(90deg, rgba(124,58,237,.25), rgba(34,211,238,.18));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .spark {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0) 55%),
+                  linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 18px rgba(34,211,238,.25), 0 0 18px rgba(124,58,237,.2);
+    }
+
+    .brand-title{
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.05;
+      margin: 0;
+      background: linear-gradient(90deg, #ffffff, rgba(255,255,255,.6), #ffffff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 12px 40px rgba(0,0,0,.3);
+    }
+
+    .sub {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+      max-width: 760px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill{
+      padding: 10px 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .actions { display:flex; gap: 10px; flex-wrap: wrap; }
+
+    button{
+      appearance: none;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 12px 26px rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-weight: 600;
+    }
+    button:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.22);
+      background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    }
+    button:active{ transform: translateY(0px) scale(.99); }
+
+    .section{
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px){
+      .section{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,0.03));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-head{
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+      display:flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      background: linear-gradient(90deg, rgba(124,58,237,.10), rgba(34,211,238,.06));
+    }
+    .panel-head h2{
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: .4px;
+    }
+    .panel-head .hint{
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .game{
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, var(--card2), rgba(255,255,255,0.03));
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+    }
+
+    .game-top{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .gtitle{
+      font-weight: 800;
+      letter-spacing: .5px;
+      font-size: 14px;
+      opacity: .95;
+    }
+
+    .inputs{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+    }
+
+    input[type="number"]{
+      width: 92px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(10,14,25,0.55);
+      color: var(--text);
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
+      transition: border-color .12s ease, transform .12s ease;
+    }
+    input[type="number"]:focus{
+      border-color: rgba(34,211,238,.55);
+      transform: translateY(-1px);
+    }
+
+    .teams{
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items:center;
+      margin-top: 2px;
+    }
+
+    .team{
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.10);
+      font-weight: 650;
+      font-size: 13px;
+      line-height: 1.3;
+      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+
+    .vs{
+      color: rgba(234,240,255,.7);
+      font-weight: 800;
+      letter-spacing: 1px;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .standings-wrap{
+      padding: 10px 14px 14px;
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    thead th{
+      text-align: left;
+      padding: 10px 10px;
+      font-size: 12px;
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      color: rgba(234,240,255,.72);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+
+    tbody td{
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 14px;
+    }
+
+    tbody tr:hover{
+      background: rgba(255,255,255,0.04);
+    }
+
+    .rank{
+      font-weight: 900;
+      width: 54px;
+    }
+
+    .name{
+      font-weight: 750;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      font-size: 12px;
+      color: rgba(234,240,255,.85);
+    }
+
+    .note{
+      color: var(--muted);
+      font-size: 13px;
+      padding: 0 14px 14px;
+    }
+
+    .footer{
+      margin-top: 18px;
+      color: rgba(234,240,255,.55);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* Winner highlight */
+    .team.winner {
+      border: 1px solid rgba(34,211,238,.6);
+      background: linear-gradient(180deg, rgba(34,211,238,.18), rgba(34,211,238,.08));
+      box-shadow: 0 0 18px rgba(34,211,238,.35);
+      transform: translateY(-2px);
+    }
+
+    /* Medal styling */
+    .medal {
+      font-size: 16px;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="brand-badge">
+        <span class="spark"></span>
+        <span style="font-weight:800; letter-spacing:.4px;">Specially made by TUAN MUDA NIEL</span>
+      </div>
+      <h1 class="brand-title">The Tuan Muda Series </h1>
+      <p class="sub">3x3 Match Score Input & Auto Standings (W / D / L / Diff)</p>
+    </div>
+
+    <div class="topbar">
+      <div class="pill">Note: A game only counts once <b>both</b> scores are entered.</div>
+      <div class="actions">
+        <button id="btnReset">Reset Scores</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Games</h2>
+          <div class="hint"></div>
+        </div>
+        <div id="games" class="grid"></div>
+        <div class="note"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Standings</h2>
+          <div class="hint"><span class="chip">Wins</span> <span class="chip">Diff</span></div>
+        </div>
+        <div class="standings-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:60px;">Rank</th>
+                <th>Player</th>
+                <th style="width:52px;">W</th>
+                <th style="width:52px;">D</th>
+                <th style="width:52px;">L</th>
+                <th style="width:70px;">Diff</th>
+              </tr>
+            </thead>
+            <tbody id="standingsBody"></tbody>
+          </table>
+        </div>
+        <div class="note"></div>
+      </div>
+    </div>
+
+    <div class="footer">© TUAN MUDA NIEL</div>
+  </div>
+
+<script>
+  // Matches (same structure; full names applied; Game 6 corrected)
+  const gamesData = [
+    { id: 1, a: ["Harvick","Ryan","Endrico"],       b: ["Rick","Franky","Kerwin"] },
+    { id: 2, a: ["Yendricco","Daniel","Ray"],      b: ["Harvick","Rick","Franky"] },
+    { id: 3, a: ["Ryan","Kerwin","Yendricco"],     b: ["Endrico","Daniel","Ray"] },
+    { id: 4, a: ["Harvick","Kerwin","Daniel"],     b: ["Ryan","Rick","Ray"] },
+    { id: 5, a: ["Endrico","Franky","Yendricco"],  b: ["Harvick","Daniel","Rick"] },
+    { id: 6, a: ["Ryan","Franky","Ray"],           b: ["Endrico","Kerwin","Yendricco"] },
+    { id: 7, a: ["Harvick","Yendricco","Ray"],     b: ["Ryan","Franky","Daniel"] },
+    { id: 8, a: ["Endrico","Rick","Yendricco"],    b: ["Kerwin","Harvick","Ray"] },
+    { id: 9, a: ["Ryan","Endrico","Kerwin"],       b: ["Rick","Daniel","Franky"] },
+  ];
+
+  // Collect all unique players
+  const players = Array.from(new Set(gamesData.flatMap(g => [...g.a, ...g.b]))).sort();
+
+  // Storage keys so your entries stay after refresh
+  const storageKey = (gameId, side) => `g${gameId}_${side}`;
+
+  function parseScore(val) {
+    if (val === null || val === undefined) return null;
+    const s = String(val).trim();
+    if (s === "") return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function renderGames() {
+    const root = document.getElementById("games");
+    root.innerHTML = "";
+
+    gamesData.forEach(g => {
+      const card = document.createElement("div");
+      card.className = "game";
+
+      const top = document.createElement("div");
+      top.className = "game-top";
+
+      const title = document.createElement("div");
+      title.className = "gtitle";
+      title.textContent = `Game ${g.id}`;
+
+      const inputs = document.createElement("div");
+      inputs.className = "inputs";
+
+      const aInput = document.createElement("input");
+      aInput.type = "number";
+      aInput.min = "0";
+      aInput.placeholder = "Team A";
+      aInput.value = localStorage.getItem(storageKey(g.id, "a")) ?? "";
+
+      const bInput = document.createElement("input");
+      bInput.type = "number";
+      bInput.min = "0";
+      bInput.placeholder = "Team B";
+      bInput.value = localStorage.getItem(storageKey(g.id, "b")) ?? "";
+
+      aInput.addEventListener("input", () => {
+        localStorage.setItem(storageKey(g.id, "a"), aInput.value);
+        updateStandings();
+        renderGames(); // refresh winner glow
+      });
+
+      bInput.addEventListener("input", () => {
+        localStorage.setItem(storageKey(g.id, "b"), bInput.value);
+        updateStandings();
+        renderGames(); // refresh winner glow
+      });
+
+      inputs.appendChild(aInput);
+      inputs.appendChild(bInput);
+
+      top.appendChild(title);
+      top.appendChild(inputs);
+
+      const teams = document.createElement("div");
+      teams.className = "teams";
+
+      const teamA = document.createElement("div");
+      teamA.className = "team";
+      teamA.textContent = g.a.join(" – ");
+
+      const vs = document.createElement("div");
+      vs.className = "vs";
+      vs.textContent = "vs";
+
+      const teamB = document.createElement("div");
+      teamB.className = "team";
+      teamB.textContent = g.b.join(" – ");
+
+      // Winner highlight (only when both scores exist and not draw)
+      const aScore = parseScore(localStorage.getItem(storageKey(g.id, "a")));
+      const bScore = parseScore(localStorage.getItem(storageKey(g.id, "b")));
+      if (aScore !== null && bScore !== null) {
+        if (aScore > bScore) teamA.classList.add("winner");
+        else if (bScore > aScore) teamB.classList.add("winner");
+      }
+
+      teams.appendChild(teamA);
+      teams.appendChild(vs);
+      teams.appendChild(teamB);
+
+      card.appendChild(top);
+      card.appendChild(teams);
+      root.appendChild(card);
+    });
+  }
+
+  function emptyStats() {
+    const map = {};
+    players.forEach(p => {
+      map[p] = { name: p, W:0, D:0, L:0, PF:0, PA:0 };
+    });
+    return map;
+  }
+
+  function updateStandings() {
+    const stats = emptyStats();
+
+    gamesData.forEach(g => {
+      const aScore = parseScore(localStorage.getItem(storageKey(g.id, "a")));
+      const bScore = parseScore(localStorage.getItem(storageKey(g.id, "b")));
+      if (aScore === null || bScore === null) return;
+
+      // track PF/PA internally (for sorting), but not displayed
+      g.a.forEach(p => { stats[p].PF += aScore; stats[p].PA += bScore; });
+      g.b.forEach(p => { stats[p].PF += bScore; stats[p].PA += aScore; });
+
+      if (aScore > bScore) {
+        g.a.forEach(p => stats[p].W += 1);
+        g.b.forEach(p => stats[p].L += 1);
+      } else if (bScore > aScore) {
+        g.b.forEach(p => stats[p].W += 1);
+        g.a.forEach(p => stats[p].L += 1);
+      } else {
+        // Draw
+        g.a.forEach(p => stats[p].D += 1);
+        g.b.forEach(p => stats[p].D += 1);
+      }
+    });
+
+    const rows = Object.values(stats).map(s => ({
+      ...s,
+      Diff: s.PF - s.PA
+    }));
+
+    // Sort: Wins desc, Diff desc, PF desc, Name asc
+    rows.sort((x, y) => {
+      if (y.W !== x.W) return y.W - x.W;
+      if (y.Diff !== x.Diff) return y.Diff - x.Diff;
+      if (y.PF !== x.PF) return y.PF - x.PF;
+      return x.name.localeCompare(y.name);
+    });
+
+    const tbody = document.getElementById("standingsBody");
+    tbody.innerHTML = "";
+
+    rows.forEach((r, idx) => {
+      let medal = "";
+      if (idx === 0) medal = "🥇";
+      if (idx === 1) medal = "🥈";
+      if (idx === 2) medal = "🥉";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="rank">${idx + 1}</td>
+        <td class="name"><span class="medal">${medal}</span>${r.name}</td>
+        <td>${r.W}</td>
+        <td>${r.D}</td>
+        <td>${r.L}</td>
+        <td>${r.Diff}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById("btnReset").addEventListener("click", () => {
+    gamesData.forEach(g => {
+      localStorage.removeItem(storageKey(g.id, "a"));
+      localStorage.removeItem(storageKey(g.id, "b"));
+    });
+    renderGames();
+    updateStandings();
+  });
+
+  // Init
+  renderGames();
+  updateStandings();
+</script>
+</body>
+</html>
