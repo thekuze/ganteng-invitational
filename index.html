@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TUAN MUDA NIEL — 3x3 Standings</title>
+  <title>The Tuan Muda Series — 3x3</title>
   <style>
     :root{
       --bg1:#0b1220;
@@ -79,7 +79,7 @@
       color: var(--muted);
       margin: 0;
       font-size: 14px;
-      max-width: 760px;
+      max-width: 820px;
     }
 
     .topbar{
@@ -115,7 +115,7 @@
       box-shadow: 0 12px 26px rgba(0,0,0,.22);
       backdrop-filter: blur(10px);
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      font-weight: 600;
+      font-weight: 700;
     }
     button:hover{
       transform: translateY(-1px);
@@ -130,7 +130,6 @@
       gap: 18px;
       align-items: start;
     }
-
     @media (max-width: 920px){
       .section{ grid-template-columns: 1fr; }
     }
@@ -196,8 +195,7 @@
       align-items:center;
     }
 
-    input[type="number"]{
-      width: 92px;
+    input[type="number"], input[type="text"], select{
       padding: 8px 10px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.14);
@@ -207,7 +205,11 @@
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
       transition: border-color .12s ease, transform .12s ease;
     }
-    input[type="number"]:focus{
+    input[type="number"]{ width: 92px; }
+    input[type="text"]{ width: 100%; }
+    select{ width: 120px; }
+
+    input:focus, select:focus{
       border-color: rgba(34,211,238,.55);
       transform: translateY(-1px);
     }
@@ -266,18 +268,10 @@
       font-size: 14px;
     }
 
-    tbody tr:hover{
-      background: rgba(255,255,255,0.04);
-    }
+    tbody tr:hover{ background: rgba(255,255,255,0.04); }
 
-    .rank{
-      font-weight: 900;
-      width: 54px;
-    }
-
-    .name{
-      font-weight: 750;
-    }
+    .rank{ font-weight: 900; width: 54px; }
+    .name{ font-weight: 750; }
 
     .chip{
       display:inline-flex;
@@ -291,18 +285,8 @@
       color: rgba(234,240,255,.85);
     }
 
-    .note{
-      color: var(--muted);
-      font-size: 13px;
-      padding: 0 14px 14px;
-    }
-
-    .footer{
-      margin-top: 18px;
-      color: rgba(234,240,255,.55);
-      font-size: 12px;
-      text-align: center;
-    }
+    .note{ color: var(--muted); font-size: 13px; padding: 0 14px 14px; }
+    .footer{ margin-top: 18px; color: rgba(234,240,255,.55); font-size: 12px; text-align: center; }
 
     /* Winner highlight */
     .team.winner {
@@ -313,12 +297,34 @@
     }
 
     /* Medal styling */
-    .medal {
-      font-size: 16px;
-      margin-right: 6px;
+    .medal { font-size: 16px; margin-right: 6px; }
+
+    /* Setup layout */
+    .setup-row{
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap: 12px;
+      padding: 14px;
+      align-items:center;
     }
+    @media (max-width: 720px){
+      .setup-row{ grid-template-columns: 1fr; }
+      select{ width: 100%; }
+    }
+    .names-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 14px 14px;
+    }
+    @media (max-width: 720px){
+      .names-grid{ grid-template-columns: 1fr; }
+    }
+
+    .hidden{ display:none !important; }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="brand">
@@ -326,74 +332,129 @@
         <span class="spark"></span>
         <span style="font-weight:800; letter-spacing:.4px;">Specially made by TUAN MUDA NIEL</span>
       </div>
-      <h1 class="brand-title">The Tuan Muda Series </h1>
-      <p class="sub">3x3 Match Score Input & Auto Standings (W / D / L / Diff)</p>
+      <h1 class="brand-title">The Tuan Muda Series</h1>
+      <p class="sub">3x3 Basketball Generator → Track scores → Auto standings. </p>
     </div>
 
-    <div class="topbar">
-      <div class="pill">Note: A game only counts once <b>both</b> scores are entered.</div>
-      <div class="actions">
-        <button id="btnReset">Reset Scores</button>
+    <!-- SETUP SCREEN -->
+    <div id="setupScreen" class="panel">
+      <div class="panel-head">
+        <h2>Setup</h2>
+        <div class="hint">Choose 6–12 players</div>
+      </div>
+
+      <div class="setup-row">
+        <div class="pill">Number of players</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <select id="playerCount">
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10" selected>10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+
+          <span class="pill" style="margin:0;">Games generated</span>
+          <select id="gamesCount">
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="9" selected>9</option>
+            <option value="12">12</option>
+          </select>
+
+          <button id="btnGenerate">Generate Matches</button>
+        </div>
+      </div>
+
+      <div class="note"></div>
+      <div id="namesGrid" class="names-grid"></div>
+
+      <div class="note">
+        Tip: If you want your exact old fixed schedule, keep using the old gamesData. This setup mode generates a fresh random schedule each time.
       </div>
     </div>
 
-    <div class="section">
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Games</h2>
-          <div class="hint"></div>
+    <!-- LEAGUE SCREEN -->
+    <div id="leagueScreen" class="hidden">
+      <div class="topbar">
+        <div class="pill">Note: A game only counts once <b>both</b> scores are entered.</div>
+        <div class="actions">
+          <button id="btnBack">Back to Setup</button>
+          <button id="btnReset">Reset Scores</button>
+          <button id="btnRegenerate">Regenerate Matches</button>
+          <button id="btnClearLeague">Clear League</button>
         </div>
-        <div id="games" class="grid"></div>
-        <div class="note"></div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h2>Standings</h2>
-          <div class="hint"><span class="chip">Wins</span> <span class="chip">Diff</span></div>
+      <div class="section">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Games</h2>
+            <div class="hint">Winner glows automatically</div>
+          </div>
+          <div id="games" class="grid"></div>
+          <div class="note">Draw = no glow.</div>
         </div>
-        <div class="standings-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:60px;">Rank</th>
-                <th>Player</th>
-                <th style="width:52px;">W</th>
-                <th style="width:52px;">D</th>
-                <th style="width:52px;">L</th>
-                <th style="width:70px;">Diff</th>
-              </tr>
-            </thead>
-            <tbody id="standingsBody"></tbody>
-          </table>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Standings</h2>
+            <div class="hint">
+              <span class="chip">Pts</span>
+              <span class="chip">Diff</span>
+            </div>
+          </div>
+          <div class="standings-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:60px;">Rank</th>
+                  <th>Player</th>
+                  <th style="width:52px;">W</th>
+                  <th style="width:52px;">D</th>
+                  <th style="width:52px;">L</th>
+                  <th style="width:70px;">Pts</th>
+                  <th style="width:70px;">Diff</th>
+                </tr>
+              </thead>
+              <tbody id="standingsBody"></tbody>
+            </table>
+          </div>
+          <div class="note"></div>
         </div>
-        <div class="note"></div>
       </div>
+
+      <div class="footer">© TUAN MUDA NIEL</div>
     </div>
-
-    <div class="footer">© TUAN MUDA NIEL</div>
   </div>
 
 <script>
-  // Matches (same structure; full names applied; Game 6 corrected)
-  const gamesData = [
-    { id: 1, a: ["Harvick","Ryan","Endrico"],       b: ["Rick","Franky","Kerwin"] },
-    { id: 2, a: ["Yendricco","Daniel","Ray"],      b: ["Harvick","Rick","Franky"] },
-    { id: 3, a: ["Ryan","Kerwin","Yendricco"],     b: ["Endrico","Daniel","Ray"] },
-    { id: 4, a: ["Harvick","Kerwin","Daniel"],     b: ["Ryan","Rick","Ray"] },
-    { id: 5, a: ["Endrico","Franky","Yendricco"],  b: ["Harvick","Daniel","Rick"] },
-    { id: 6, a: ["Ryan","Franky","Ray"],           b: ["Endrico","Kerwin","Yendricco"] },
-    { id: 7, a: ["Harvick","Yendricco","Ray"],     b: ["Ryan","Franky","Daniel"] },
-    { id: 8, a: ["Endrico","Rick","Yendricco"],    b: ["Kerwin","Harvick","Ray"] },
-    { id: 9, a: ["Ryan","Endrico","Kerwin"],       b: ["Rick","Daniel","Franky"] },
+  // ---------- Storage ----------
+  const STORE = {
+    games: "tmn_gamesData_v2",
+    roster: "tmn_roster_v2",
+    meta: "tmn_meta_v2",
+  };
+  const scoreKey = (gameId, side) => `g${gameId}_${side}`;
+
+  // Default premium roster (edit on setup)
+  const DEFAULT_NAMES = [
+    "Harvick",
+    "Ryan",
+    "Endrico",
+    "Rick",
+    "Richard",
+    "Franky",
+    "Kerwin",
+    "Yendricco",
+    "Daniel",
+    "Ray"
   ];
 
-  // Collect all unique players
-  const players = Array.from(new Set(gamesData.flatMap(g => [...g.a, ...g.b]))).sort();
-
-  // Storage keys so your entries stay after refresh
-  const storageKey = (gameId, side) => `g${gameId}_${side}`;
-
+  // ---------- Helpers ----------
   function parseScore(val) {
     if (val === null || val === undefined) return null;
     const s = String(val).trim();
@@ -401,6 +462,262 @@
     const n = Number(s);
     return Number.isFinite(n) ? n : null;
   }
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Returns a string signature so we can avoid repeating the exact same matchup too much
+  function matchupSig(teamA, teamB) {
+    const A = teamA.slice().sort().join("|");
+    const B = teamB.slice().sort().join("|");
+    return [A, B].sort().join(" VS ");
+  }
+
+  // Generate "reasonable" random schedule:
+  // - each game uses 6 players (3v3)
+  // - tries to rotate players evenly
+  // - avoids repeating the exact same matchup signature
+function generateScheduleGuaranteedFair(roster, gamesCount) {
+  if (roster.length < 6) throw new Error("Need at least 6 players for 3v3.");
+
+  const n = roster.length;
+  const totalSlots = gamesCount * 6;
+
+  // Base target + remainder distribution
+    const target = {};
+
+  if (totalSlots % n === 0) {
+    const exact = totalSlots / n;
+    roster.forEach(p => target[p] = exact);
+  } else {
+    const base = Math.floor(totalSlots / n);
+    const extra = totalSlots % n;
+
+    const shuffledRoster = shuffle(roster);
+    shuffledRoster.forEach((p, i) => {
+      target[p] = base + (i < extra ? 1 : 0);
+    });
+  }
+
+  // Remaining quota
+  const remaining = { ...target };
+
+  // Track teammate pair counts (to reduce repeats)
+  const pairCount = new Map(); // key "A|B" sorted
+  const pairKey = (a, b) => [a, b].sort().join("|");
+  const addPairs = (team) => {
+    for (let i = 0; i < team.length; i++) {
+      for (let j = i + 1; j < team.length; j++) {
+        const k = pairKey(team[i], team[j]);
+        pairCount.set(k, (pairCount.get(k) || 0) + 1);
+      }
+    }
+  };
+  const teamPenalty = (team) => {
+    // sum of existing teammate pair counts (lower is better)
+    let s = 0;
+    for (let i = 0; i < team.length; i++) {
+      for (let j = i + 1; j < team.length; j++) {
+        s += (pairCount.get(pairKey(team[i], team[j])) || 0);
+      }
+    }
+    return s;
+  };
+
+  const games = [];
+
+  // Try to build each game with backtracking-lite retries
+  for (let id = 1; id <= gamesCount; id++) {
+    let success = false;
+
+    for (let attempt = 0; attempt < 500; attempt++) {
+      // Eligible players still needing games
+      const eligible = roster.filter(p => remaining[p] > 0);
+
+      // Must have at least 6 eligible to fill the game
+      if (eligible.length < 6) break;
+
+      // Build a candidate pool biased toward higher remaining quota
+      // (so we don't strand someone at the end)
+      const weighted = [];
+      eligible.forEach(p => {
+        for (let k = 0; k < remaining[p]; k++) weighted.push(p);
+      });
+
+      // pick 6 unique
+      const picked = [];
+      const used = new Set();
+      while (picked.length < 6) {
+        const p = weighted[Math.floor(Math.random() * weighted.length)];
+        if (!used.has(p)) {
+          used.add(p);
+          picked.push(p);
+        }
+      }
+
+      // split into teams; try a few splits and take the lowest penalty
+      const splits = [];
+      for (let s = 0; s < 25; s++) {
+        const m = shuffle(picked);
+        const a = m.slice(0, 3);
+        const b = m.slice(3, 6);
+        const pen = teamPenalty(a) + teamPenalty(b);
+        splits.push({ a, b, pen });
+      }
+      splits.sort((x, y) => x.pen - y.pen);
+      const best = splits[0];
+
+      // Validate: after using these 6, no one should go negative (they won't)
+      // But we ALSO need to ensure feasibility for remaining games:
+      // simple feasibility check: total remaining slots after this game must fit eligible counts
+      const tempRemaining = { ...remaining };
+      [...best.a, ...best.b].forEach(p => tempRemaining[p]--);
+
+      const remainingSlots = Object.values(tempRemaining).reduce((acc, v) => acc + v, 0);
+      const gamesLeft = gamesCount - id;
+      if (remainingSlots !== gamesLeft * 6) continue; // must match exactly
+
+      // Good: commit
+      remaining[best.a[0]]--; remaining[best.a[1]]--; remaining[best.a[2]]--;
+      remaining[best.b[0]]--; remaining[best.b[1]]--; remaining[best.b[2]]--;
+
+      addPairs(best.a);
+      addPairs(best.b);
+
+      games.push({ id, a: best.a, b: best.b });
+      success = true;
+      break;
+    }
+
+    if (!success) {
+      // If we fail (rare), restart entirely with a new random assignment of who gets extra
+      return generateScheduleGuaranteedFair(roster, gamesCount);
+    }
+  }
+
+  return games;
+
+  // ---- helper ----
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+}
+
+  function getRosterFromSetup() {
+    const count = Number(document.getElementById("playerCount").value);
+    const inputs = Array.from(document.querySelectorAll(".nameInput"));
+    const roster = inputs
+      .slice(0, count)
+      .map(i => i.value.trim())
+      .filter(Boolean);
+
+    // If user deletes a name, fill with placeholder
+    while (roster.length < count) roster.push(`Player ${roster.length + 1}`);
+
+    // Enforce unique names (case-insensitive) so fairness logic works correctly
+    const lower = roster.map(n => n.toLowerCase());
+    const dupLower = lower.find((n, i) => lower.indexOf(n) !== i);
+    if (dupLower) {
+      const firstIdx = lower.indexOf(dupLower);
+      alert(`Duplicate name detected: "${roster[firstIdx]}". Please make all names unique.`);
+      throw new Error("Duplicate player names");
+    }
+
+    return roster;
+  }
+
+  function saveLeague(roster, games) {
+    localStorage.setItem(STORE.roster, JSON.stringify(roster));
+    localStorage.setItem(STORE.games, JSON.stringify(games));
+    localStorage.setItem(STORE.meta, JSON.stringify({ createdAt: Date.now() }));
+  }
+
+  function loadLeague() {
+    const rosterRaw = localStorage.getItem(STORE.roster);
+    const gamesRaw = localStorage.getItem(STORE.games);
+    if (!rosterRaw || !gamesRaw) return null;
+    try {
+      return {
+        roster: JSON.parse(rosterRaw),
+        games: JSON.parse(gamesRaw),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function clearScoresOnly(games) {
+    games.forEach(g => {
+      localStorage.removeItem(scoreKey(g.id, "a"));
+      localStorage.removeItem(scoreKey(g.id, "b"));
+    });
+  }
+
+  function clearEverything() {
+    const league = loadLeague();
+    if (league?.games) clearScoresOnly(league.games);
+    localStorage.removeItem(STORE.roster);
+    localStorage.removeItem(STORE.games);
+    localStorage.removeItem(STORE.meta);
+  }
+
+  // ---------- UI routing ----------
+  function showSetup() {
+    document.getElementById("setupScreen").classList.remove("hidden");
+    document.getElementById("leagueScreen").classList.add("hidden");
+  }
+
+  function showLeague() {
+    document.getElementById("setupScreen").classList.add("hidden");
+    document.getElementById("leagueScreen").classList.remove("hidden");
+  }
+
+  // ---------- Setup Screen ----------
+  function renderNameInputs() {
+  const grid = document.getElementById("namesGrid");
+  grid.innerHTML = "";
+
+  const count = Number(document.getElementById("playerCount").value);
+
+  for (let i = 0; i < 12; i++) {
+    const wrap = document.createElement("div");
+
+    const label = document.createElement("div");
+    label.className = "pill";
+    label.style.margin = "0 0 8px";
+    label.textContent = `Player ${i + 1}`;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "nameInput";
+    input.placeholder = "Enter name...";
+    input.value = ""; // <-- no autofill
+
+    if (i >= count) {
+      input.disabled = true;
+      input.style.opacity = "0.4";
+    }
+
+    wrap.appendChild(label);
+    wrap.appendChild(input);
+    grid.appendChild(wrap);
+  }
+}
+
+  // ---------- League Screen ----------
+  let gamesData = [];
+  let players = [];
 
   function renderGames() {
     const root = document.getElementById("games");
@@ -424,22 +741,22 @@
       aInput.type = "number";
       aInput.min = "0";
       aInput.placeholder = "Team A";
-      aInput.value = localStorage.getItem(storageKey(g.id, "a")) ?? "";
+      aInput.value = localStorage.getItem(scoreKey(g.id, "a")) ?? "";
 
       const bInput = document.createElement("input");
       bInput.type = "number";
       bInput.min = "0";
       bInput.placeholder = "Team B";
-      bInput.value = localStorage.getItem(storageKey(g.id, "b")) ?? "";
+      bInput.value = localStorage.getItem(scoreKey(g.id, "b")) ?? "";
 
       aInput.addEventListener("input", () => {
-        localStorage.setItem(storageKey(g.id, "a"), aInput.value);
+        localStorage.setItem(scoreKey(g.id, "a"), aInput.value);
         updateStandings();
         renderGames(); // refresh winner glow
       });
 
       bInput.addEventListener("input", () => {
-        localStorage.setItem(storageKey(g.id, "b"), bInput.value);
+        localStorage.setItem(scoreKey(g.id, "b"), bInput.value);
         updateStandings();
         renderGames(); // refresh winner glow
       });
@@ -465,9 +782,9 @@
       teamB.className = "team";
       teamB.textContent = g.b.join(" – ");
 
-      // Winner highlight (only when both scores exist and not draw)
-      const aScore = parseScore(localStorage.getItem(storageKey(g.id, "a")));
-      const bScore = parseScore(localStorage.getItem(storageKey(g.id, "b")));
+      // Winner highlight
+      const aScore = parseScore(localStorage.getItem(scoreKey(g.id, "a")));
+      const bScore = parseScore(localStorage.getItem(scoreKey(g.id, "b")));
       if (aScore !== null && bScore !== null) {
         if (aScore > bScore) teamA.classList.add("winner");
         else if (bScore > aScore) teamB.classList.add("winner");
@@ -495,11 +812,11 @@
     const stats = emptyStats();
 
     gamesData.forEach(g => {
-      const aScore = parseScore(localStorage.getItem(storageKey(g.id, "a")));
-      const bScore = parseScore(localStorage.getItem(storageKey(g.id, "b")));
+      const aScore = parseScore(localStorage.getItem(scoreKey(g.id, "a")));
+      const bScore = parseScore(localStorage.getItem(scoreKey(g.id, "b")));
       if (aScore === null || bScore === null) return;
 
-      // track PF/PA internally (for sorting), but not displayed
+      // track PF/PA only for diff tie-break
       g.a.forEach(p => { stats[p].PF += aScore; stats[p].PA += bScore; });
       g.b.forEach(p => { stats[p].PF += bScore; stats[p].PA += aScore; });
 
@@ -510,22 +827,21 @@
         g.b.forEach(p => stats[p].W += 1);
         g.a.forEach(p => stats[p].L += 1);
       } else {
-        // Draw
         g.a.forEach(p => stats[p].D += 1);
         g.b.forEach(p => stats[p].D += 1);
       }
     });
 
-    const rows = Object.values(stats).map(s => ({
-      ...s,
-      Diff: s.PF - s.PA
-    }));
+    const rows = Object.values(stats).map(s => {
+      const Diff = s.PF - s.PA;
+      const Pts = s.W - s.L; // Win +1, Draw 0, Loss -1
+      return { ...s, Diff, Pts };
+    });
 
-    // Sort: Wins desc, Diff desc, PF desc, Name asc
+    // Sort: Points desc, Diff desc, Name asc
     rows.sort((x, y) => {
-      if (y.W !== x.W) return y.W - x.W;
+      if (y.Pts !== x.Pts) return y.Pts - x.Pts;
       if (y.Diff !== x.Diff) return y.Diff - x.Diff;
-      if (y.PF !== x.PF) return y.PF - x.PF;
       return x.name.localeCompare(y.name);
     });
 
@@ -545,24 +861,77 @@
         <td>${r.W}</td>
         <td>${r.D}</td>
         <td>${r.L}</td>
+        <td>${r.Pts}</td>
         <td>${r.Diff}</td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  document.getElementById("btnReset").addEventListener("click", () => {
-    gamesData.forEach(g => {
-      localStorage.removeItem(storageKey(g.id, "a"));
-      localStorage.removeItem(storageKey(g.id, "b"));
-    });
+  function bootLeagueFromStorage() {
+    const league = loadLeague();
+    if (!league) return false;
+
+    gamesData = league.games;
+    players = league.roster.slice().sort();
+    return true;
+  }
+
+  // ---------- Events ----------
+  document.getElementById("playerCount").addEventListener("change", renderNameInputs);
+
+  document.getElementById("btnGenerate").addEventListener("click", () => {
+    const roster = getRosterFromSetup();
+    const gamesCount = Number(document.getElementById("gamesCount").value);
+
+    const games = generateScheduleGuaranteedFair(roster, gamesCount);
+    saveLeague(roster, games);
+
+    // clear old scores for old game ids
+    clearScoresOnly(games);
+
+    // go league
+    bootLeagueFromStorage();
+    showLeague();
     renderGames();
     updateStandings();
   });
 
-  // Init
-  renderGames();
-  updateStandings();
+  document.getElementById("btnBack").addEventListener("click", () => {
+    showSetup();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", () => {
+    clearScoresOnly(gamesData);
+    renderGames();
+    updateStandings();
+  });
+
+  document.getElementById("btnRegenerate").addEventListener("click", () => {
+    // regenerate using current setup inputs (so you can edit names first)
+    showSetup();
+    // keep name inputs visible; user clicks Generate again
+  });
+
+  document.getElementById("btnClearLeague").addEventListener("click", () => {
+    const ok = confirm("Clear league (matches + scores) and return to setup?");
+    if (!ok) return;
+    clearEverything();
+    showSetup();
+    renderNameInputs();
+  });
+
+  // ---------- Init ----------
+  renderNameInputs();
+
+  // If league exists, open league screen directly
+  if (bootLeagueFromStorage()) {
+    showLeague();
+    renderGames();
+    updateStandings();
+  } else {
+    showSetup();
+  }
 </script>
 </body>
 </html>
