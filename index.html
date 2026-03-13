@@ -362,6 +362,7 @@
             <option value="6">6</option>
             <option value="8">8</option>
             <option value="9" selected>9</option>
+            <option value="10">10</option>
             <option value="12">12</option>
           </select>
 
@@ -470,6 +471,19 @@
     }
     return a;
   }
+
+  function checkAppearanceCounts(games, roster) {
+  const counts = {};
+  roster.forEach(p => counts[p] = 0);
+
+  games.forEach(g => {
+    g.a.forEach(p => counts[p]++);
+    g.b.forEach(p => counts[p]++);
+  });
+
+  console.log("Appearance counts:", counts);
+  return counts;
+}
 
   // Returns a string signature so we can avoid repeating the exact same matchup too much
   function matchupSig(teamA, teamB) {
@@ -601,18 +615,7 @@ function generateScheduleGuaranteedFair(roster, gamesCount) {
   }
 
   return games;
-
-  // ---- helper ----
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
 }
-
   function getRosterFromSetup() {
     const count = Number(document.getElementById("playerCount").value);
     const inputs = Array.from(document.querySelectorAll(".nameInput"));
@@ -740,25 +743,28 @@ function generateScheduleGuaranteedFair(roster, gamesCount) {
       aInput.type = "number";
       aInput.min = "0";
       aInput.placeholder = "Team A";
+      aInput.inputMode = "numeric";
       aInput.value = localStorage.getItem(scoreKey(g.id, "a")) ?? "";
 
       const bInput = document.createElement("input");
       bInput.type = "number";
       bInput.min = "0";
       bInput.placeholder = "Team B";
+      bInput.inputMode = "numeric";
       bInput.value = localStorage.getItem(scoreKey(g.id, "b")) ?? "";
 
       aInput.addEventListener("input", () => {
-        localStorage.setItem(scoreKey(g.id, "a"), aInput.value);
-        updateStandings();
-        renderGames(); // refresh winner glow
-      });
+      localStorage.setItem(scoreKey(g.id, "a"), aInput.value);
+      updateStandings();
+    });
 
-      bInput.addEventListener("input", () => {
-        localStorage.setItem(scoreKey(g.id, "b"), bInput.value);
-        updateStandings();
-        renderGames(); // refresh winner glow
-      });
+    bInput.addEventListener("input", () => {
+      localStorage.setItem(scoreKey(g.id, "b"), bInput.value);
+      updateStandings();
+    });
+
+    aInput.addEventListener("blur", renderGames);
+    bInput.addEventListener("blur", renderGames);
 
       inputs.appendChild(aInput);
       inputs.appendChild(bInput);
@@ -884,6 +890,9 @@ function generateScheduleGuaranteedFair(roster, gamesCount) {
     const gamesCount = Number(document.getElementById("gamesCount").value);
 
     const games = generateScheduleGuaranteedFair(roster, gamesCount);
+
+    checkAppearanceCounts(games, roster);   // ← debug fairness
+
     saveLeague(roster, games);
 
     // clear old scores for old game ids
